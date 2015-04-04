@@ -9,8 +9,7 @@
 	<form action="LogoutServlet" method="post">
     <h3>Login successful!!!</h3>  
     <h4>  
-        Hello Sales user, 
-        I am Batman ! 
+        Hello Sales user,  
         <%=session.getAttribute("name")%></h4>
         	 <tr>  
                     <td><input type="submit" name="button" value="Logout" /></td>
