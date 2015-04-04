@@ -1,0 +1,60 @@
+package com.amzi.servlets;  
+  
+import java.io.IOException;  
+import java.io.PrintWriter;  
+  
+import javax.servlet.RequestDispatcher;  
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.HttpSession;  
+  
+import com.amzi.dao.LoginDao;
+  
+public class LoginServlet extends HttpServlet{  
+  
+    private static final long serialVersionUID = 1L;  
+  
+    public void doPost(HttpServletRequest request, HttpServletResponse response)    
+            throws ServletException, IOException {    
+  
+        response.setContentType("text/html");    
+        PrintWriter out = response.getWriter();
+        
+        String selectedValue = request.getParameter("button");
+        if(selectedValue.equalsIgnoreCase("login")){
+        String n=request.getParameter("username");    
+        String p=request.getParameter("userpass");   
+          
+        HttpSession session = request.getSession(false);  
+        if(session!=null)  
+        session.setAttribute("name", n);
+        else
+        session.setAttribute("name", "a");
+        int val = LoginDao.validate(n, p);
+        if(val==1){    
+            RequestDispatcher rd=request.getRequestDispatcher("welcomeIT.jsp");    
+            rd.forward(request,response);    
+        }
+        else if(val==2){
+        	RequestDispatcher rd=request.getRequestDispatcher("welcomeInventory.jsp");      
+            rd.forward(request,response);	
+        }
+        else if (val==3){
+        	RequestDispatcher rd=request.getRequestDispatcher("welcomeSales.jsp");  
+            rd.forward(request,response);    	
+        }
+        else{    
+            out.print("<p style=\"color:red\">Sorry username or password error</p>");    
+            RequestDispatcher rd=request.getRequestDispatcher("index.jsp");    
+            rd.include(request,response);    
+        }  
+        }
+        else{
+        	RequestDispatcher rd=request.getRequestDispatcher("newUser.jsp");    
+            rd.forward(request,response);
+        }
+        out.close();    
+    }    
+}
