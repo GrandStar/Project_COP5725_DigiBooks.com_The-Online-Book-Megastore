@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.amzi.dao.LoginDao;
-import com.amzi.obj.Customer;
+import com.amzi.obj.MEmplyoee;
 
 /**
  * Servlet implementation class UserInfoServlet
@@ -42,23 +42,35 @@ public class UserInfoServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");    
         PrintWriter out = response.getWriter();
-        Customer cust = new Customer();
-        cust.Fname = request.getParameter("username");    
-        cust.Lname=request.getParameter("fullname");
-        cust.Gender=request.getParameter("gender");    
-        cust.email=request.getParameter("emailid");
-        cust.AddressLine1=request.getParameter("line1");
-        cust.AddressLine2=request.getParameter("line2");
-        cust.password=request.getParameter("password"); 
-        cust.state=request.getParameter("state");
+        
+        
+        MEmplyoee emp = new MEmplyoee();
+        emp.setFname(request.getParameter("firstname"));
+        emp.setLname(request.getParameter("fullname"));
+        emp.setGender(Integer.parseInt(request.getParameter("gender")));
+        emp.setRoleid(Integer.parseInt(request.getParameter("role")));
+        emp.setPhonenumber(request.getParameter("phonenumber"));
+        emp.setEmailid(request.getParameter("emailid"));
+        emp.setUsername(request.getParameter("username"));
+        emp.setPassword(request.getParameter("password"));
         
         HttpSession session = request.getSession(false);  
         if(session!=null)  
-        session.setAttribute("name", cust.Fname);  
+        session.setAttribute("name", emp.getFname());  
         
-        //Boolean val = LoginDao.EnterInfo(cust);
-        RequestDispatcher rd=request.getRequestDispatcher("welcome.jsp");    
-        rd.forward(request,response);
+        int result = LoginDao.register(emp);
+        
+        if(result==1){
+        	out.print("<p style=\"color:red\">This username is already Existed, Please change it and try again.</p>");    
+            RequestDispatcher rd=request.getRequestDispatcher("newUser.jsp");    
+            rd.include(request,response);
+        }
+        else{
+        	out.print("<p style=\"color:green\">User is successfully created.</p>");
+        	RequestDispatcher rd=request.getRequestDispatcher("index.jsp");    
+            rd.include(request,response);
+        }
+        
         
         out.close(); 
 	}
